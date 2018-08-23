@@ -2,8 +2,10 @@ package com.advancedtelematic.tuf.keyserver.client
 
 import java.security.interfaces.RSAPublicKey
 
+import brave.Tracing
+import brave.http.HttpTracing
 import com.advancedtelematic.libtuf.data.ClientDataType.RootRole
-import com.advancedtelematic.libtuf.data.TufDataType.{EcPrime256KeyType, Ed25519TufKey, KeyId, KeyType, RepoId, RoleType, RsaKeyType, JsonSignedPayload, SignedPayload, ValidKeyId}
+import com.advancedtelematic.libtuf.data.TufDataType.{EcPrime256KeyType, Ed25519TufKey, JsonSignedPayload, KeyId, KeyType, RepoId, RoleType, RsaKeyType, SignedPayload, ValidKeyId}
 import com.advancedtelematic.libtuf.data.ClientCodecs._
 import com.advancedtelematic.libats.http.Errors.RemoteServiceError
 import com.advancedtelematic.libtuf_server.keyserver.{KeyserverClient, KeyserverHttpClient}
@@ -19,6 +21,7 @@ import scala.async.Async.{async, await}
 import scala.concurrent.{ExecutionContext, Future}
 import io.circe.syntax._
 import com.advancedtelematic.libtuf.data.ClientCodecs._
+import com.advancedtelematic.libtuf_server.Tracing.{NullTracing, NullTracing__, RequestTracing}
 
 class KeyserverHttpClientSpec extends TufKeyserverSpec
   with ResourceSpec
@@ -31,6 +34,8 @@ class KeyserverHttpClientSpec extends TufKeyserverSpec
   implicit val ec = ExecutionContext.global
 
   override implicit def patienceConfig = PatienceConfig(timeout = Span(20, Seconds), interval = Span(500, Millis))
+
+  implicit lazy val requestTracing: RequestTracing = new NullTracing
 
   val client = new KeyserverHttpClient("http://test-keyserver", testHttpClient)
 

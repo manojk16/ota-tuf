@@ -43,7 +43,6 @@ import scala.util.{Failure, Success}
 import slick.jdbc.MySQLProfile.api._
 import RoleChecksumHeader._
 
-
 class TufTargetsPublisher(messageBus: MessageBusPublisher)(implicit ec: ExecutionContext) {
   def targetAdded(namespace: Namespace, item: TargetItem): Future[Unit] =
     messageBus.publish(TufTargetAdded(namespace, item.filename, item.checksum, item.length, item.custom))
